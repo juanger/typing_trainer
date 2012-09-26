@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "typing_trainer"
   gem.require_paths = ["lib"]
   gem.version       = TypingTrainer::VERSION
+  gem.add_dependency "highline", "~> 1.6.13"
+  gem.add_dependency "ffi-ncurses"
+  gem.add_dependency "ruby-termios"
 end
