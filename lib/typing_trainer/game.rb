@@ -13,14 +13,19 @@ class TypingTrainer::Game
 
   def play!
     prepare_screen
+    before = Time.now
     @sentences.each do |sentence|
       show_sentence(sentence)
       clean_screen
     end
-    show_result
+    show_result(before)
   end
 
 private
+
+  def get_character
+    @h.get_character
+  end
 
   def show_sentence(sentence)
     @cursor = 0
@@ -32,18 +37,25 @@ private
     $stdout.flush
 
     while c = get_character.chr do
+      # puts "CHAR: #{c}"
       case c
       when "\x7F"           # backspace
         delete_char
         next
       when original[@cursor] # good
-        print c, :green
+        print c, :correct
+      when "\n"
+        @reset = true
       else                  # error
         log_error(c)
       end
 
-      @typed += c
-      @cursor += 1
+      unless @reset
+        @typed += c
+        @cursor += 1
+      end
+
+      @reset = false
 
       if original == @typed
         break
@@ -51,17 +63,27 @@ private
     end
   end
 
-  def show_result
+  def show_result(started_at)
+    @h.restore_mode
     total_chars = @sentences.join.size
     accuracy = "#{((total_chars - @total_errors) * 100.0 / total_chars).round(2)}%"
+    elapsed_minutes = (Time.now - started_at)/60
+    total_words = @sentences.join.split(' ').size
+    # wpm = "#{total_words/elapsed_minutes.to_f} WPM"
+    ccpm = "#{((total_chars)/elapsed_minutes.to_f).floor/5} WPM / #{((total_chars)/elapsed_minutes.to_f).floor} CPM"
 
     print "This are your results:\n", :bold
-    print "Accuracy: ", :green
+    print "Total time: #{elapsed_minutes} minutes\n", :bold
+    print "Character count: #{total_chars}\n", :bold
+    print 'Speed: ', :blue
+    print ccpm, :bold
+    print ' '
+    print 'Accuracy: ', :green
     print accuracy, :bold
-    print " "
-    print "Errors: ", :red
+    print ' '
+    print 'Errors: ', :red
     print "#{@total_errors}/#{total_chars}", :bold
-    if @h.ask("\n\nDo you want to play again? [y,n]", ["y", "n"]) == "Y"
+    if @h.ask("\n\nDo you want to play again? [y,n]", ["y", "n"]) == "y"
       play!
     end
   end
@@ -83,6 +105,7 @@ private
     @h.output_rows.times do
       print :up
     end
+    @h.raw_no_echo_mode
   end
 
   def clean_screen
@@ -96,7 +119,7 @@ private
     print :backward
     print :erase_char
     @cursor -= 1 if @cursor > 0
-    @typed = @typed[0..-2]
+    @typed = @typed[0..-2] if @typed.size > 0
   end
 
   def log_error(c)

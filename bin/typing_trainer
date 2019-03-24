@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby -r rubygems
+require 'typing_trainer'
+
+TypingTrainer.run(ARGV[0])

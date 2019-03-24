@@ -2,6 +2,7 @@ require "typing_trainer/version"
 
 require "highline"
 require "highline/system_extensions"
+require "stty"
 require "ffi"
 require "termios"
 require "typing_trainer/game"
@@ -22,11 +23,11 @@ module TypingTrainer
 
   HighLine.color_scheme = COLORS
 
-  def self.run
-    @game = Game.new(["First sentence", "Second sentence"])
+  def self.run(text_file)
+    sentences = open(text_file).readlines.map {|l| l.strip!; l == "" ? nil : l;}.compact
+    @game = Game.new(sentences)
+
     @game.play!
   end
 
 end
-
-TypingTrainer.run

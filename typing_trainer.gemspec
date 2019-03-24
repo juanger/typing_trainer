@@ -4,8 +4,8 @@ require File.expand_path('../lib/typing_trainer/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Juan Germán Castañeda Echevarría"]
   gem.email         = ["juanger@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Ruby typing trainer}
+  gem.summary       = %q{Improve your typing skills by completing the tutorial or using your own text or code!}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
@@ -17,4 +17,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "highline", "~> 1.6.13"
   gem.add_dependency "ffi-ncurses"
   gem.add_dependency "ruby-termios"
+  gem.add_dependency "stty"
+  gem.add_development_dependency "rspec"
 end
