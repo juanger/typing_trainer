@@ -23,9 +23,8 @@ module TypingTrainer
 
   HighLine.color_scheme = COLORS
 
-  def self.run(text_file)
-    sentences = open(text_file).readlines.map {|l| l.strip!; l == "" ? nil : l;}.compact
-    @game = Game.new(sentences)
+  def self.run(options)
+    @game = Game.new(options)
 
     @game.play!
   end

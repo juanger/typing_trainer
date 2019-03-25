@@ -8,7 +8,7 @@ describe TypingTrainer::Game, '#play!' do
     game.stub(:show_result)
   end
 
-  let(:game) { TypingTrainer::Game.new(["first", "second"]) }
+  let(:game) { TypingTrainer::Game.new(sentences: ["first", "second"], layout: :QWERTY) }
 
   it "shows each sentence" do
     game.should_receive(:show_sentence).exactly(2)
@@ -32,22 +32,6 @@ describe TypingTrainer::Game, '#play!' do
 
   it "handles delete at beginning" do
     input = [[0x7F].pack('U')]*3 + %w{f i r s t} + %w{s e c o n d}
-
-    game.should_receive(:get_character).and_return(*input)
-    game.should_receive(:show_result)
-    game.play!
-  end
-
-  it "ignores newlines between sentences" do
-    input = %w{f i r s t} + ["\n"] +  %w{s e c o n d}
-
-    game.should_receive(:get_character).and_return(*input)
-    game.should_receive(:show_result)
-    game.play!
-  end
-
-  it "sends the sentence with newline" do
-    input = %w{f i r s t s e c} + ["\n"] + %w{o n d}
 
     game.should_receive(:get_character).and_return(*input)
     game.should_receive(:show_result)

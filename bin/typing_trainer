@@ -1,4 +1,29 @@
 #!/usr/bin/env ruby -r rubygems
 require 'typing_trainer'
+require 'optparse'
 
-TypingTrainer.run(ARGV[0])
+options = {}
+
+OptionParser.new do |opts|
+  opts.accept(Symbol) do |string|
+    string.to_sym
+  end
+
+  opts.banner = 'Usage: typing_trainer [options]'
+
+  opts.on('-t', '--letter LETTER', String, "A single letter to practice")
+
+  opts.on('-l', '--level LEVEL', Integer, "The starting level to play")
+
+  opts.on('-y', '--layout LAYOUT', Symbol, "The layout to use for finger hints and level progression")
+
+  opts.on('-f', '--file FILEPATH', String, "Path to file containing custom text to use")
+
+  opts.on('-a', '--advanced', TrueClass, "Hide finger help (default show)")
+
+  opts.on('-d', '--debug', TrueClass, "Show debugging messages (default hide)")
+end.parse!(into: options)
+
+
+
+TypingTrainer.run(options)
